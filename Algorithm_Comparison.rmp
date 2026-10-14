@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?><process version="12.1.001">
+  <context>
+    <input/>
+    <output/>
+    <macros/>
+  </context>
+  <operator activated="true" class="process" compatibility="12.1.001" expanded="true" name="Process">
+    <parameter key="logverbosity" value="init"/>
+    <parameter key="random_seed" value="2001"/>
+    <parameter key="send_mail" value="never"/>
+    <parameter key="notification_email" value=""/>
+    <parameter key="process_duration_for_mail" value="30"/>
+    <parameter key="encoding" value="SYSTEM"/>
+    <process expanded="true">
+      <operator activated="true" class="productivity:execute_process" compatibility="12.1.001" expanded="true" height="68" name="Execute Random_Forest" width="90" x="112" y="34">
+        <parameter key="process_location" value="Random_Forest"/>
+        <parameter key="use_input" value="true"/>
+        <parameter key="store_output" value="false"/>
+        <parameter key="propagate_metadata_recursively" value="true"/>
+        <parameter key="cache_process" value="true"/>
+        <list key="macros"/>
+        <parameter key="fail_for_unknown_macros" value="true"/>
+      </operator>
+      <operator activated="true" class="performance_to_data" compatibility="12.1.001" expanded="true" height="82" name="Performance to Data" width="90" x="246" y="34"/>
+      <operator activated="true" class="blending:generate_columns" compatibility="12.1.001" expanded="true" height="82" name="Generate Attributes" width="90" x="380" y="34">
+        <list key="function_descriptions">
+          <parameter key="model_name" value="&quot;Random Forest&quot;"/>
+        </list>
+        <parameter key="keep_all_columns" value="true"/>
+        <parameter key="default_time_zone" value="Asia/Kuala_Lumpur"/>
+      </operator>
+      <operator activated="true" class="productivity:execute_process" compatibility="12.1.001" expanded="true" height="68" name="Execute Naive_Bayes" width="90" x="112" y="136">
+        <parameter key="process_location" value="Naive_Bayes"/>
+        <parameter key="use_input" value="true"/>
+        <parameter key="store_output" value="false"/>
+        <parameter key="propagate_metadata_recursively" value="true"/>
+        <parameter key="cache_process" value="true"/>
+        <list key="macros"/>
+        <parameter key="fail_for_unknown_macros" value="true"/>
+      </operator>
+      <operator activated="true" class="performance_to_data" compatibility="12.1.001" expanded="true" height="82" name="Performance to Data (2)" width="90" x="246" y="136"/>
+      <operator activated="true" class="blending:generate_columns" compatibility="12.1.001" expanded="true" height="82" name="Generate Attributes (2)" width="90" x="380" y="136">
+        <list key="function_descriptions">
+          <parameter key="model_name" value="&quot;Naive Bayes&quot;"/>
+        </list>
+        <parameter key="keep_all_columns" value="true"/>
+        <parameter key="default_time_zone" value="Asia/Kuala_Lumpur"/>
+      </operator>
+      <operator activated="true" class="productivity:execute_process" compatibility="12.1.001" expanded="true" height="124" name="Execute Decision_Tree_F1_Model" width="90" x="112" y="238">
+        <parameter key="process_location" value="Decision_Tree_F1_Model"/>
+        <parameter key="use_input" value="true"/>
+        <parameter key="store_output" value="false"/>
+        <parameter key="propagate_metadata_recursively" value="true"/>
+        <parameter key="cache_process" value="true"/>
+        <list key="macros"/>
+        <parameter key="fail_for_unknown_macros" value="true"/>
+      </operator>
+      <operator activated="true" class="performance_to_data" compatibility="12.1.001" expanded="true" height="82" name="Performance to Data (3)" width="90" x="246" y="238"/>
+      <operator activated="true" class="blending:generate_columns" compatibility="12.1.001" expanded="true" height="82" name="Generate Attributes (3)" width="90" x="380" y="238">
+        <list key="function_descriptions">
+          <parameter key="model_name" value="&quot;Decision Tree&quot;"/>
+        </list>
+        <parameter key="keep_all_columns" value="true"/>
+        <parameter key="default_time_zone" value="Asia/Kuala_Lumpur"/>
+      </operator>
+      <operator activated="true" class="productivity:execute_process" compatibility="12.1.001" expanded="true" height="124" name="Execute Logistic_Regression_F1_Model" width="90" x="112" y="391">
+        <parameter key="process_location" value="Logistic_Regression_F1_Model"/>
+        <parameter key="use_input" value="true"/>
+        <parameter key="store_output" value="false"/>
+        <parameter key="propagate_metadata_recursively" value="true"/>
+        <parameter key="cache_process" value="true"/>
+        <list key="macros"/>
+        <parameter key="fail_for_unknown_macros" value="true"/>
+      </operator>
+      <operator activated="true" class="performance_to_data" compatibility="12.1.001" expanded="true" height="82" name="Performance to Data (4)" width="90" x="246" y="391"/>
+      <operator activated="true" class="blending:generate_columns" compatibility="12.1.001" expanded="true" height="82" name="Generate Attributes (4)" width="90" x="380" y="391">
+        <list key="function_descriptions">
+          <parameter key="model_name" value="&quot;Logistic Regression&quot;"/>
+        </list>
+        <parameter key="keep_all_columns" value="true"/>
+        <parameter key="default_time_zone" value="Asia/Kuala_Lumpur"/>
+      </operator>
+      <operator activated="true" class="append" compatibility="12.1.001" expanded="true" height="145" name="Append" width="90" x="514" y="34">
+        <parameter key="data_management" value="auto"/>
+        <parameter key="merge_type" value="all"/>
+      </operator>
+      <operator activated="true" class="blending:pivot" compatibility="12.1.001" expanded="true" height="103" name="Pivot" width="90" x="648" y="34">
+        <parameter key="group_by_attributes" value="model_name"/>
+        <parameter key="column_grouping_attribute" value="Criterion"/>
+        <list key="aggregation_attributes">
+          <parameter key="Value" value="average"/>
+        </list>
+        <parameter key="use_default_aggregation" value="false"/>
+        <parameter key="default_aggregation_function" value="first"/>
+      </operator>
+      <connect from_op="Execute Random_Forest" from_port="result 1" to_op="Performance to Data" to_port="performance vector"/>
+      <connect from_op="Performance to Data" from_port="example set" to_op="Generate Attributes" to_port="table input"/>
+      <connect from_op="Generate Attributes" from_port="table output" to_op="Append" to_port="example set 1"/>
+      <connect from_op="Execute Naive_Bayes" from_port="result 1" to_op="Performance to Data (2)" to_port="performance vector"/>
+      <connect from_op="Performance to Data (2)" from_port="example set" to_op="Generate Attributes (2)" to_port="table input"/>
+      <connect from_op="Generate Attributes (2)" from_port="table output" to_op="Append" to_port="example set 2"/>
+      <connect from_op="Execute Decision_Tree_F1_Model" from_port="result 1" to_op="Performance to Data (3)" to_port="performance vector"/>
+      <connect from_op="Performance to Data (3)" from_port="example set" to_op="Generate Attributes (3)" to_port="table input"/>
+      <connect from_op="Generate Attributes (3)" from_port="table output" to_op="Append" to_port="example set 3"/>
+      <connect from_op="Execute Logistic_Regression_F1_Model" from_port="result 1" to_op="Performance to Data (4)" to_port="performance vector"/>
+      <connect from_op="Performance to Data (4)" from_port="example set" to_op="Generate Attributes (4)" to_port="table input"/>
+      <connect from_op="Generate Attributes (4)" from_port="table output" to_op="Append" to_port="example set 4"/>
+      <connect from_op="Append" from_port="merged set" to_op="Pivot" to_port="input"/>
+      <connect from_op="Pivot" from_port="output" to_port="result 1"/>
+      <portSpacing port="source_input 1" spacing="0"/>
+      <portSpacing port="sink_result 1" spacing="0"/>
+      <portSpacing port="sink_result 2" spacing="0"/>
+    </process>
+  </operator>
+</process>
